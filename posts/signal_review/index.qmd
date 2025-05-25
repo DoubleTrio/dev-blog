@@ -1,0 +1,123 @@
+---
+title: "Random Signal Notes"
+author: "TheKaceFiles"
+date: "2025-05-24"
+description: "A collection of Digital Signal Processing notes"
+date-modified: "5/25/2025"
+categories: [dsp]
+jupyter: python3
+---
+
+
+## Signals
+
+
+We'll first import the following libraries:
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+from IPython.display import Audio
+```
+
+
+Suppose we have the following signal which is sampled at 50 Hz and has a duration of 2 seconds.
+```{python}
+#| label: fig-signal-example
+#| fig-cap: "Signal example"
+fs = 50
+duration = 2
+freq = 2
+N = np.arange(int(fs * duration))
+t = N / fs       
+y = np.cos(2 * np.pi * freq * t)
+
+
+plt.plot(t, y)
+plt.xlabel("Seconds")
+plt.ylabel("Amplitude")
+plt.title("Wave Example")
+
+plt.grid(True)
+```
+
+The signal above has a frequency of 2 Hz (`fs`) which means that it completes 2 cycles in 1 second. 
+
+::: {.callout-note title="Definition: Period"}
+The **period** of the signal is how long it takes for a signal to complete 1 cycle by taking
+
+$$
+t_0 = \frac{1}{f_s}
+$$
+
+where $f_s$ is the frequency of the signal.
+:::
+
+In @fig-signal-example, the signal has a **period** of $t_0 = \frac{1}{f_s} = \frac{1}{2} = 0.5$ seconds. 
+
+
+
+## Notes on Music Notes
+
+The human ear can hear frequencies between 20 Hz and 20 kHz. The sampling rate is 44.1 kHZ because of something called the **Nyquist–Shannon sampling theorem** which states that the sampling rate has to be at least twice of the maximum frequency of the signal which indeed $2 \cdot 20 \text{ kHz} < 44.1 \text{ kHZ}$. There's also more history for why the sampling rate is 44.1 kHZ [here](https://en.wikipedia.org/wiki/44,100_Hz).
+
+Now, as for the frequencies of musical notes in Western music, we can use the formula below:
+
+
+$$
+f = 2^{(n/12)} * 440
+$$
+
+The formula represents the frequency of the music note that is $n$ semitones away from `A4 (440 Hz)`. Each increasing semitone step increases the frequency by the ratio of $2^{(n/12)}$.
+
+
+::: {.callout-note title="Examples"}
+$n = 0 \rightarrow 2^{(0/12)} * 440 = 440 \text{ Hz} = A4$ \
+$n = 1 \rightarrow 2^{(1/12)} * 440 \approx 466.163 \text{ Hz} = A \sharp 4 / B\flat 4$ \
+$n = 12 \rightarrow 2^{(12/12)} * 440 = 880 \text{ Hz} = A5$ \
+$n = -12 \rightarrow 2^{(-12/12)} * 440 = 220 \text{ Hz} = A3$
+:::
+
+Notice that doubling the frequency represents an octave increase of a music note. Now, if we assume that 20 kHz is the maximum frequency that the human ear can hear, then the highest named musical note can be found by solving for $n$ when $f =  20 \text{ kHz}$.
+
+
+$$
+\begin{align*}
+20000 &= 2^{\frac{n}{12}} \cdot 440 \\
+\frac{20000}{440} &= 2^{\frac{n}{12}} \\
+45.45 &= 2^{\frac{n}{12}} \\
+\log_2(45.45) &= \frac{n}{12} \\
+n &= 12 \cdot \log_2(45.45) \\
+n &\approx 66.0745
+\end{align*}
+$$
+
+When $n \approx 66$, this is 66 semitones aboves `A4` and corresponds to the note $D \sharp 10/ E\flat 10$. 
+
+Let's take a listen of the music notes, starting from `A3` to `D#10`!
+```{python}
+
+fs = 44100
+note_duration = 0.5
+pause_duration = 0.10
+
+N = np.arange(int(fs * note_duration))
+t = N / fs
+
+pause_arr = np.zeros(int(fs * pause_duration))
+
+def get_frequency(n):
+    """
+    Return the frequency of the note n semitones starting from A4 (440 Hz).
+    """
+    return 2**(n / 12) * 440
+
+
+
+audio_sequence = np.array([])
+for n in range(-12, 67):
+  freq = get_frequency(n)
+  signal_arr = np.cos(2 * np.pi * freq * t)
+  audio_sequence = np.concatenate((audio_sequence, signal_arr, pause_arr))
+
+Audio(data=audio_sequence, rate=fs)
+```

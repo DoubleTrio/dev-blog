@@ -1,0 +1,58 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "GSOC 2025 - Pitch Correction for Sound Playback in Sequencer Blog",
+    "section": "",
+    "text": "Random Signal Notes\n\n\n\ndsp\n\n\n\nA collection of Digital Signal Processing notes\n\n\n\n\n\nMay 24, 2025\n\n\nTheKaceFiles\n\n\n\n\n\n\n\n\n\n\n\n\nIntroduction\n\n\n\npersonal\n\n\n\n\n\n\n\n\n\nMay 23, 2025\n\n\nTheKaceFiles\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/signal_review/index.html",
+    "href": "posts/signal_review/index.html",
+    "title": "Random Signal Notes",
+    "section": "",
+    "text": "We’ll first import the following libraries:\n\n\nCode\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom IPython.display import Audio\n\n\nSuppose we have the following signal which is sampled at 50 Hz and has a duration of 2 seconds.\n\n\nCode\nfs = 50\nduration = 2\nfreq = 2\nN = np.arange(int(fs * duration))\nt = N / fs       \ny = np.cos(2 * np.pi * freq * t)\n\n\nplt.plot(t, y)\nplt.xlabel(\"Seconds\")\nplt.ylabel(\"Amplitude\")\nplt.title(\"Wave Example\")\n\nplt.grid(True)\n\n\n\n\n\n\n\n\nFigure 1: Signal example\n\n\n\n\n\nThe signal above has a frequency of 2 Hz (fs) which means that it completes 2 cycles in 1 second.\n\n\n\n\n\n\nDefinition: Period\n\n\n\nThe period of the signal is how long it takes for a signal to complete 1 cycle by taking\n\\[\nt_0 = \\frac{1}{f_s}\n\\]\nwhere \\(f_s\\) is the frequency of the signal.\n\n\nIn Figure 1, the signal has a period of \\(t_0 = \\frac{1}{f_s} = \\frac{1}{2} = 0.5\\) seconds."
+  },
+  {
+    "objectID": "posts/signal_review/index.html#signals",
+    "href": "posts/signal_review/index.html#signals",
+    "title": "Random Signal Notes",
+    "section": "",
+    "text": "We’ll first import the following libraries:\n\n\nCode\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom IPython.display import Audio\n\n\nSuppose we have the following signal which is sampled at 50 Hz and has a duration of 2 seconds.\n\n\nCode\nfs = 50\nduration = 2\nfreq = 2\nN = np.arange(int(fs * duration))\nt = N / fs       \ny = np.cos(2 * np.pi * freq * t)\n\n\nplt.plot(t, y)\nplt.xlabel(\"Seconds\")\nplt.ylabel(\"Amplitude\")\nplt.title(\"Wave Example\")\n\nplt.grid(True)\n\n\n\n\n\n\n\n\nFigure 1: Signal example\n\n\n\n\n\nThe signal above has a frequency of 2 Hz (fs) which means that it completes 2 cycles in 1 second.\n\n\n\n\n\n\nDefinition: Period\n\n\n\nThe period of the signal is how long it takes for a signal to complete 1 cycle by taking\n\\[\nt_0 = \\frac{1}{f_s}\n\\]\nwhere \\(f_s\\) is the frequency of the signal.\n\n\nIn Figure 1, the signal has a period of \\(t_0 = \\frac{1}{f_s} = \\frac{1}{2} = 0.5\\) seconds."
+  },
+  {
+    "objectID": "posts/signal_review/index.html#human-hearing",
+    "href": "posts/signal_review/index.html#human-hearing",
+    "title": "Collection of Random Signal Notes",
+    "section": "Human Hearing",
+    "text": "Human Hearing\nThe human ear can hear frequencies between 20 Hz and 20 kHz. The sampling rate is 44.1 kHZ because of something called the Nyquist–Shannon sampling theorem which states that the sampling rate has to be at least twice of the maximum frequency of the signal.\n\n\nCode\nfs = 44100\n\nduration = 3\nN = int(duration * fs)\nfreq = 440\n\nn = np.arange(N)\nt = n / fs       \nx = np.cos(2 * np.pi * freq * n / fs)\n\nAudio(data=x, rate=fs)\n\n\n\n                \n                    \n                    Your browser does not support the audio element."
+  },
+  {
+    "objectID": "posts/prelude/index.html",
+    "href": "posts/prelude/index.html",
+    "title": "Introduction",
+    "section": "",
+    "text": "Hi! I’m the TheKaceFiles and I’m currently one of the GSOC contributors for Blender! This summer, I’ll be implementing a pitch correction toggle for Blender’s Video Sequence Editor (VSE) under Aras Pranckevičius. This blog will be primarily used for notes covering Blender’s codebase, the pitch correction research papers, review concepts from digital signal processing, or whatever topics I find interesting.\nI will admit, I do feel both nervous and excited for this project. Nervous, as in, I’m worried that I will be unable to complete the project within the upcoming months and that this is one of the biggest project/feature I will be undertaking. Excited, as in, I will be learning (and relearning) many new things like concepts for pitch correction and navigating Blender’s codebase. Over the next few days/weeks, I will reviewing and Digital Signals Theory by Brian McFee and A Digital Signal Processing Primer by Kenneth Steiglitz and putting up my own notes up. One of the biggest gripes I have about these books is that they never have enough examples or solutions (which is understandable as they’re trying to minimize the page count for printing!) My notes are meant to bridge this gap and meant to help me (and hopefully others) better understand the material!\nWe’ll see how that goes until then!"
+  },
+  {
+    "objectID": "posts/signal_review/index.html#notes-on-hearing",
+    "href": "posts/signal_review/index.html#notes-on-hearing",
+    "title": "Collection of Random Signal Notes",
+    "section": "Notes on Hearing",
+    "text": "Notes on Hearing\nThe human ear can hear frequencies between 20 Hz and 20 kHz. The sampling rate is 44.1 kHZ because of something called the Nyquist–Shannon sampling theorem which states that the sampling rate has to be at least twice of the maximum frequency of the signal which indeed \\(2 \\cdot 20 \\text{ kHz} &lt; 44.1 \\text{ kHZ}\\). There’s also more history for why the samplign rate is 44.1 kHZ here.\nNow,\nA3 = 220 Hz\nA4 = 440 Hz\nA5 = 880 Hz\n\\[\nf = 2^{(n/12)} * 440\n\\]\n\n\nCode\nfs = 44100\n\nduration = 3\nN = int(duration * fs)\nfreq = 440\n\nn = np.arange(N)\nt = n / fs       \nx = np.cos(2 * np.pi * freq * n / fs)\n\nAudio(data=x, rate=fs)\n\n\n\n                \n                    \n                    Your browser does not support the audio element."
+  },
+  {
+    "objectID": "posts/signal_review/index.html#notes-on-human-hearing",
+    "href": "posts/signal_review/index.html#notes-on-human-hearing",
+    "title": "Collection of Random Signal Notes",
+    "section": "Notes on Human Hearing",
+    "text": "Notes on Human Hearing\nThe human ear can hear frequencies between 20 Hz and 20 kHz. The sampling rate is 44.1 kHZ because of something called the Nyquist–Shannon sampling theorem which states that the sampling rate has to be at least twice of the maximum frequency of the signal which indeed \\(2 \\cdot 20 \\text{ kHz} &lt; 44.1 \\text{ kHZ}\\). There’s also more history for why the sampling rate is 44.1 kHZ here.\nNow, as for the frequencies of musical notes in Western music, we can use the formula below:\n\\[\nf = 2^{(n/12)} * 440\n\\]\nThe formula represents the frequency of the music note that is \\(n\\) semitones away from A4 (440 Hz). Each increasing semitone step increases the frequency by the ratio of \\(2^{(n/12)}\\).\n\n\n\n\n\n\nExamples\n\n\n\n\\(n = 0 \\rightarrow 2^{(0/12)} * 440 = 440 \\text{ Hz} = A4\\)\n\\(n = 1 \\rightarrow 2^{(1/12)} * 440 \\approx 466.163 \\text{ Hz} = A \\sharp 4 / B\\flat 4\\)\n\\(n = 12 \\rightarrow 2^{(12/12)} * 440 = 880 \\text{ Hz} = A5\\)\n\\(n = -12 \\rightarrow 2^{(-12/12)} * 440 = 220 \\text{ Hz} = A3\\)\n\n\nNotice that doubling the frequency represents an octave increase of a music note. Now, if we assume that 20 kHz is the maximum frequency that the human ear can hear, then the highest named musical note can be found by solving for \\(n\\) when \\(f =  20 \\text{ kHz}\\).\n\\[\n\\begin{align*}\n20000 &= 2^{\\frac{n}{12}} \\cdot 440 \\\\\n\\frac{20000}{440} &= 2^{\\frac{n}{12}} \\\\\n45.45 &= 2^{\\frac{n}{12}} \\\\\n\\log_2(45.45) &= \\frac{n}{12} \\\\\nn &= 12 \\cdot \\log_2(45.45) \\\\\nn &\\approx 66.0745\n\\end{align*}\n\\]\nWhen \\(n \\approx 66\\), this is 66 semitones aboves A4 and corresponds to the note \\(D \\sharp 10/ E\\flat 10\\).\nLet’s take a listen of the music notes, starting from A3 to D#10!\n\n\nCode\nfs = 44100\nnote_duration = 0.5\npause_duration = 0.10\n\nN = np.arange(int(fs * note_duration))\nt = N / fs\n\npause_arr = np.zeros(int(fs * pause_duration))\n\ndef get_frequency(n):\n    \"\"\"\n    Return the frequency of the note n semitones starting from A4 (440 Hz).\n    \"\"\"\n    return 2**(n / 12) * 440\n\n\n\naudio_sequence = np.array([])\nfor n in range(-12, 67):\n  freq = get_frequency(n)\n  signal_arr = np.cos(2 * np.pi * freq * t)\n  audio_sequence = np.concatenate((audio_sequence, signal_arr, pause_arr))\n\nAudio(data=audio_sequence, rate=fs)\n\n\n\n                \n                    \n                    Your browser does not support the audio element."
+  },
+  {
+    "objectID": "posts/signal_review/index.html#notes-on-music-notes",
+    "href": "posts/signal_review/index.html#notes-on-music-notes",
+    "title": "Random Signal Notes",
+    "section": "Notes on Music Notes",
+    "text": "Notes on Music Notes\nThe human ear can hear frequencies between 20 Hz and 20 kHz. The sampling rate is 44.1 kHZ because of something called the Nyquist–Shannon sampling theorem which states that the sampling rate has to be at least twice of the maximum frequency of the signal which indeed \\(2 \\cdot 20 \\text{ kHz} &lt; 44.1 \\text{ kHZ}\\). There’s also more history for why the sampling rate is 44.1 kHZ here.\nNow, as for the frequencies of musical notes in Western music, we can use the formula below:\n\\[\nf = 2^{(n/12)} * 440\n\\]\nThe formula represents the frequency of the music note that is \\(n\\) semitones away from A4 (440 Hz). Each increasing semitone step increases the frequency by the ratio of \\(2^{(n/12)}\\).\n\n\n\n\n\n\nExamples\n\n\n\n\\(n = 0 \\rightarrow 2^{(0/12)} * 440 = 440 \\text{ Hz} = A4\\)\n\\(n = 1 \\rightarrow 2^{(1/12)} * 440 \\approx 466.163 \\text{ Hz} = A \\sharp 4 / B\\flat 4\\)\n\\(n = 12 \\rightarrow 2^{(12/12)} * 440 = 880 \\text{ Hz} = A5\\)\n\\(n = -12 \\rightarrow 2^{(-12/12)} * 440 = 220 \\text{ Hz} = A3\\)\n\n\nNotice that doubling the frequency represents an octave increase of a music note. Now, if we assume that 20 kHz is the maximum frequency that the human ear can hear, then the highest named musical note can be found by solving for \\(n\\) when \\(f =  20 \\text{ kHz}\\).\n\\[\n\\begin{align*}\n20000 &= 2^{\\frac{n}{12}} \\cdot 440 \\\\\n\\frac{20000}{440} &= 2^{\\frac{n}{12}} \\\\\n45.45 &= 2^{\\frac{n}{12}} \\\\\n\\log_2(45.45) &= \\frac{n}{12} \\\\\nn &= 12 \\cdot \\log_2(45.45) \\\\\nn &\\approx 66.0745\n\\end{align*}\n\\]\nWhen \\(n \\approx 66\\), this is 66 semitones aboves A4 and corresponds to the note \\(D \\sharp 10/ E\\flat 10\\).\nLet’s take a listen of the music notes, starting from A3 to D#10!\n\n\nCode\nfs = 44100\nnote_duration = 0.5\npause_duration = 0.10\n\nN = np.arange(int(fs * note_duration))\nt = N / fs\n\npause_arr = np.zeros(int(fs * pause_duration))\n\ndef get_frequency(n):\n    \"\"\"\n    Return the frequency of the note n semitones starting from A4 (440 Hz).\n    \"\"\"\n    return 2**(n / 12) * 440\n\n\n\naudio_sequence = np.array([])\nfor n in range(-12, 67):\n  freq = get_frequency(n)\n  signal_arr = np.cos(2 * np.pi * freq * t)\n  audio_sequence = np.concatenate((audio_sequence, signal_arr, pause_arr))\n\nAudio(data=audio_sequence, rate=fs)\n\n\n\n                \n                    \n                    Your browser does not support the audio element."
+  }
+]
