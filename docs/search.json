@@ -123,7 +123,7 @@
     "href": "posts/blender_extern_lib/index.html#some-results",
     "title": "Adding External Libraries in Blender",
     "section": "Some Results",
-    "text": "Some Results\nOriginal Audio:\n\n\nCode\nfrom IPython.display import Audio\nAudio(\"beatles_orig.wav\", rate=48000)\n\n\n\n                \n                    \n                    Your browser does not support the audio element.\n                \n              \n\n\n2x Speed:\n\n\n\n                \n                    \n                    Your browser does not support the audio element.\n                \n              \n\n\n0.5x Speed:\n\n\n\n                \n                    \n                    Your browser does not support the audio element.\n                \n              \n\n\nThe code for this example can be found here… [TODO]"
+    "text": "Some Results\nOriginal Audio:\n\n\nCode\nfrom IPython.display import Audio\nAudio(\"beatles_orig.wav\", rate=48000)\n\n\n\n                \n                    \n                    Your browser does not support the audio element.\n                \n              \n\n\n2x Speed:\n\n\n\n                \n                    \n                    Your browser does not support the audio element.\n                \n              \n\n\n0.5x Speed:\n\n\n\n                \n                    \n                    Your browser does not support the audio element.\n                \n              \n\n\nThe code for this example can be found here… [TODO]\nChecking the static library librubberband_static.a, the library size is 2.6 MB.\nHere’s RubberBandSingle.cpp"
   },
   {
     "objectID": "posts/blender_extern_lib/index.html#compiling-the-rubber-band-library-wip",
@@ -144,7 +144,7 @@
     "href": "posts/blender_extern_lib/index.html#compiling-the-rubber-band-library-todo",
     "title": "Adding External Libraries in Blender",
     "section": "Compiling the Rubber Band Library (TODO)",
-    "text": "Compiling the Rubber Band Library (TODO)\nAfter downloading the source code, I looked at COMPILING.md which had some references to Meson but more importantly…\nFile Structure:\nRubberBandTest\n├─ CMakeLists.txt\n├─ beatles.wav\n├─ main.cpp\n└─ rubberband"
+    "text": "Compiling the Rubber Band Library (TODO)\nAfter downloading the source code, I looked at COMPILING.md which had some references to Meson but more importantly… something about RubberBandSingle.cpp and adding it as a static library, which is the approach I went with…\nFile Structure:\nRubberBandTest\n├─ CMakeLists.txt\n├─ beatles.wav\n├─ main.cpp\n└─ rubberband"
   },
   {
     "objectID": "posts/blender_extern_lib/index.html#library-usage-todo",

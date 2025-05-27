@@ -20,7 +20,7 @@ As a preliminary task, I wanted to attempt to build the Rubber Band Library and 
 
 ## Compiling the Rubber Band Library (TODO)
 
-After downloading the [source code](https://breakfastquay.com/files/releases/rubberband-4.0.0.tar.bz2), I looked at `COMPILING.md` which had some references to [Meson](https://mesonbuild.com/) but more importantly...
+After downloading the [source code](https://breakfastquay.com/files/releases/rubberband-4.0.0.tar.bz2), I looked at `COMPILING.md` which had some references to [Meson](https://mesonbuild.com/) but more importantly... something about RubberBandSingle.cpp and adding it as a static library, which is the approach I went with...
 
 
 *File Structure:*
@@ -68,4 +68,11 @@ Audio("beatles0.5x.wav", rate=48000)
 ```
 
 The code for this example can be found here... [TODO]
+
+
+Checking the static library `librubberband_static.a`, the library size is `2.6 MB`.
+
+
+Here's [RubberBandSingle.cpp](https://github.com/breakfastquay/rubberband/blob/default/single/RubberBandSingle.cpp)
+
 
