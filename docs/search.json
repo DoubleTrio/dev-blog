@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "GSOC 2025 - Pitch Correction for Sound Playback in Sequencer Blog",
     "section": "",
-    "text": "Random Signal Notes\n\n\n\ndsp\n\n\n\nA collection of Digital Signal Processing notes\n\n\n\n\n\nMay 24, 2025\n\n\nTheKaceFiles\n\n\n\n\n\n\n\n\n\n\n\n\nIntroduction\n\n\n\npersonal\n\n\n\n\n\n\n\n\n\nMay 23, 2025\n\n\nTheKaceFiles\n\n\n\n\n\nNo matching items"
+    "text": "Adding External Libraries in Blender\n\n\n\nblender\n\nc++\n\n\n\nWIP: Integrating the Rubber Band Library in Blender\n\n\n\n\n\nMay 25, 2025\n\n\nTheKaceFiles\n\n\n\n\n\n\n\n\n\n\n\n\nRandom Signal Notes\n\n\n\ndsp\n\npython\n\n\n\nA collection of Digital Signal Processing notes\n\n\n\n\n\nMay 24, 2025\n\n\nTheKaceFiles\n\n\n\n\n\n\n\n\n\n\n\n\nIntroduction\n\n\n\npersonal\n\n\n\n\n\n\n\n\n\nMay 23, 2025\n\n\nTheKaceFiles\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/signal_review/index.html",
@@ -32,7 +32,7 @@
     "href": "posts/prelude/index.html",
     "title": "Introduction",
     "section": "",
-    "text": "Hi! I’m the TheKaceFiles and I’m currently one of the GSOC contributors for Blender! This summer, I’ll be implementing a pitch correction toggle for Blender’s Video Sequence Editor (VSE) under Aras Pranckevičius. This blog will be primarily used for notes covering Blender’s codebase, the pitch correction research papers, review concepts from digital signal processing, or whatever topics I find interesting.\nI will admit, I do feel both nervous and excited for this project. Nervous, as in, I’m worried that I will be unable to complete the project within the upcoming months and that this is one of the biggest project/feature I will be undertaking. Excited, as in, I will be learning (and relearning) many new things like concepts for pitch correction and navigating Blender’s codebase. Over the next few days/weeks, I will reviewing and Digital Signals Theory by Brian McFee and A Digital Signal Processing Primer by Kenneth Steiglitz and putting up my own notes up. One of the biggest gripes I have about these books is that they never have enough examples or solutions (which is understandable as they’re trying to minimize the page count for printing!) My notes are meant to bridge this gap and meant to help me (and hopefully others) better understand the material!\nWe’ll see how that goes until then!"
+    "text": "Hi! I’m the TheKaceFiles and I’m currently one of the GSOC contributors for Blender! This summer, I’ll be implementing a pitch correction toggle for Blender’s Video Sequence Editor (VSE) under Aras Pranckevičius. This blog will be primarily used for notes covering Blender’s codebase, the pitch correction research papers, review concepts from digital signal processing, whatever topics I find interesting, or just my thinking process. Do note that my thoughts/notes will not be always be organized or precise, but they will be reorganized once I have a better grasp.\nI will admit, I do feel both nervous and excited for this project. Nervous, as in, I’m worried that I will be unable to complete the project within the upcoming months and that this is one of the biggest project/feature I will be undertaking. Excited, as in, I will be learning (and relearning) many new things like concepts for pitch correction and navigating Blender’s codebase. Over the next few days/weeks, I will reviewing and Digital Signals Theory by Brian McFee and A Digital Signal Processing Primer by Kenneth Steiglitz and putting up my own notes up. One of the biggest gripes I have about these books is that they never have enough examples or solutions (which is understandable as they’re trying to minimize the page count for printing!) My notes are meant to bridge this gap and meant to help me (and hopefully others) better understand the material!\nWe’ll see how that goes until then!"
   },
   {
     "objectID": "posts/signal_review/index.html#notes-on-hearing",
@@ -54,5 +54,103 @@
     "title": "Random Signal Notes",
     "section": "Notes on Music Notes",
     "text": "Notes on Music Notes\nThe human ear can hear frequencies between 20 Hz and 20 kHz. The sampling rate is 44.1 kHZ because of something called the Nyquist–Shannon sampling theorem which states that the sampling rate has to be at least twice of the maximum frequency of the signal which indeed \\(2 \\cdot 20 \\text{ kHz} &lt; 44.1 \\text{ kHZ}\\). There’s also more history for why the sampling rate is 44.1 kHZ here.\nNow, as for the frequencies of musical notes in Western music, we can use the formula below:\n\\[\nf = 2^{(n/12)} * 440\n\\]\nThe formula represents the frequency of the music note that is \\(n\\) semitones away from A4 (440 Hz). Each increasing semitone step increases the frequency by the ratio of \\(2^{(n/12)}\\).\n\n\n\n\n\n\nExamples\n\n\n\n\\(n = 0 \\rightarrow 2^{(0/12)} * 440 = 440 \\text{ Hz} = A4\\)\n\\(n = 1 \\rightarrow 2^{(1/12)} * 440 \\approx 466.163 \\text{ Hz} = A \\sharp 4 / B\\flat 4\\)\n\\(n = 12 \\rightarrow 2^{(12/12)} * 440 = 880 \\text{ Hz} = A5\\)\n\\(n = -12 \\rightarrow 2^{(-12/12)} * 440 = 220 \\text{ Hz} = A3\\)\n\n\nNotice that doubling the frequency represents an octave increase of a music note. Now, if we assume that 20 kHz is the maximum frequency that the human ear can hear, then the highest named musical note can be found by solving for \\(n\\) when \\(f =  20 \\text{ kHz}\\).\n\\[\n\\begin{align*}\n20000 &= 2^{\\frac{n}{12}} \\cdot 440 \\\\\n\\frac{20000}{440} &= 2^{\\frac{n}{12}} \\\\\n45.45 &= 2^{\\frac{n}{12}} \\\\\n\\log_2(45.45) &= \\frac{n}{12} \\\\\nn &= 12 \\cdot \\log_2(45.45) \\\\\nn &\\approx 66.0745\n\\end{align*}\n\\]\nWhen \\(n \\approx 66\\), this is 66 semitones aboves A4 and corresponds to the note \\(D \\sharp 10/ E\\flat 10\\).\nLet’s take a listen of the music notes, starting from A3 to D#10!\n\n\nCode\nfs = 44100\nnote_duration = 0.5\npause_duration = 0.10\n\nN = np.arange(int(fs * note_duration))\nt = N / fs\n\npause_arr = np.zeros(int(fs * pause_duration))\n\ndef get_frequency(n):\n    \"\"\"\n    Return the frequency of the note n semitones starting from A4 (440 Hz).\n    \"\"\"\n    return 2**(n / 12) * 440\n\n\n\naudio_sequence = np.array([])\nfor n in range(-12, 67):\n  freq = get_frequency(n)\n  signal_arr = np.cos(2 * np.pi * freq * t)\n  audio_sequence = np.concatenate((audio_sequence, signal_arr, pause_arr))\n\nAudio(data=audio_sequence, rate=fs)\n\n\n\n                \n                    \n                    Your browser does not support the audio element."
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#external-libraries",
+    "href": "posts/blender_extern_lib/index.html#external-libraries",
+    "title": "Adding External Libraries in Blender",
+    "section": "External Libraries",
+    "text": "External Libraries\nIn my proposal, I mentioned that the Rubber Band Library, a 3rd-party library could be used to implement pitch correction into editor. However, before doing so,\nas a potential way to implement pitch correction into\nBeing able to build Rubberband, evaluating how complex/hard their build process is, estimating their binary size footprint would be useful. If the whole library is “small enough” (very subjective), it could be versioned directly under Blender extern folder similar to Audaspace\nPreliminary tasks sound good. By the way, within Blender itself the Audaspace source code is “just compiled” together with the rest of blender. So if you figure out how to build blender locally, that already includes audaspace (upstream Audaspace might be different; within Blender all the audaspace bits are under extern/audaspace folder and they largely match upstream project, but sometimes are with some local modifications) potential 3rd-party library\nmentioned that I wanted to\nLook at Audaspace"
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html",
+    "href": "posts/blender_extern_lib/index.html",
+    "title": "Adding External Libraries in Blender",
+    "section": "",
+    "text": "In my proposal, I mentioned that the Rubber Band Library, a 3rd-party library compatible with Blender’s open source license, could be used to implement pitch correction into Blender’s video sequence editor (VSE). This would mean that we wouldn’t have to implement the algorithm manually! However, before proceeding with this approach, there several things that had to be considered:\n\nBuild Complexity - Evaluating how difficult/complex the build process is\nBuild Size - Is it binary size small enough to be integrated into Blender?\n\nAs a preliminary task, I wanted to attempt to build the Rubber Band Library and looked at extern/audaspace to better understand Blender’s build process. Surprisingly enough, I’ve never used CMAKE (though I have used makefile before) nor never downloaded a library for any of my C++ programs during university. So, I thought it would be a good to try to utilize the Rubber Band Library on a bare bones command-line program, where you can specify the input audio file and then the output audio file at 2x speed which will be pitch-corrected by the library."
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#rubber-band-library",
+    "href": "posts/blender_extern_lib/index.html#rubber-band-library",
+    "title": "Adding External Libraries in Blender",
+    "section": "",
+    "text": "In my proposal, I mentioned that the Rubber Band Library, a 3rd-party library compatible with Blender’s open source license, could be used to implement pitch correction into Blender’s video sequence editor (VSE). However, before proceeding with this approach, there several things that had to be considered:\n\nBuild Complexity - Evaluating how difficult/complex the build process is\nBuild Size - Is it binary size small enough to be integrated into Blender?\n\nAs a preliminary task, I wanted to attempt to build the Rubber Band Library and looked at extern/audaspace to better understand Blender’s build process."
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#intro",
+    "href": "posts/blender_extern_lib/index.html#intro",
+    "title": "Adding External Libraries in Blender",
+    "section": "",
+    "text": "In my proposal, I mentioned that the Rubber Band Library, a 3rd-party library compatible with Blender’s open source license, could be used to implement pitch correction into Blender’s video sequence editor (VSE). This would mean that we wouldn’t have to implement the algorithm manually! However, before proceeding with this approach, there several things that had to be considered:\n\nBuild Complexity - Evaluating how difficult/complex the build process is\nBuild Size - Is it binary size small enough to be integrated into Blender?\n\nAs a preliminary task, I wanted to attempt to build the Rubber Band Library and looked at extern/audaspace to better understand Blender’s build process. Surprisingly enough, I’ve never used CMAKE (though I have used makefile before) nor never downloaded a library for any of my C++ programs during university. So, I thought it would be a good to try to utilize the Rubber Band Library on a bare bones command-line program, where you can specify the input audio file and then the output audio file at 2x speed which will be pitch-corrected by the library."
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#building-the-rubber-band-library",
+    "href": "posts/blender_extern_lib/index.html#building-the-rubber-band-library",
+    "title": "Adding External Libraries in Blender",
+    "section": "Building the Rubber Band Library",
+    "text": "Building the Rubber Band Library"
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#audaspace-library-usage",
+    "href": "posts/blender_extern_lib/index.html#audaspace-library-usage",
+    "title": "Adding External Libraries in Blender",
+    "section": "Audaspace Library Usage",
+    "text": "Audaspace Library Usage\n#include &lt;AUD_Sound.h&gt;\n\nIn source/blender/blenkernel/intern/sound.cc\n#ifdef WITH_AUDASPACE\n#  include \"../../../intern/audaspace/intern/AUD_Set.h\"\n#  include &lt;AUD_Handle.h&gt;\n#  include &lt;AUD_Sequence.h&gt;\n#  include &lt;AUD_Sound.h&gt;\n#  include &lt;AUD_Special.h&gt;\n#endif\nWhich the &lt;AUD_Handle.h&gt; corresponds to the file:　blender/extern/audaspace/bindings/C/AUD_Handle.h\ntypedef enum\n{\n    AUD_CHANNELS_INVALID    = 0,    /// Invalid channel count.\n    AUD_CHANNELS_MONO       = 1,    /// Mono.\n    AUD_CHANNELS_STEREO     = 2,    /// Stereo.\n    AUD_CHANNELS_STEREO_LFE = 3,    /// Stereo with LFE channel.\n    AUD_CHANNELS_SURROUND4  = 4,    /// 4 channel surround sound.\n    AUD_CHANNELS_SURROUND5  = 5,    /// 5 channel surround sound.\n    AUD_CHANNELS_SURROUND51 = 6,    /// 5.1 surround sound.\n    AUD_CHANNELS_SURROUND61 = 7,    /// 6.1 surround sound.\n    AUD_CHANNELS_SURROUND71 = 8 /// 7.1 surround sound.\n} AUD_Channels;"
+  },
+  {
+    "objectID": "posts/signal_review/index.html#complex-numbers",
+    "href": "posts/signal_review/index.html#complex-numbers",
+    "title": "GSOC 2025 - Pitch Correction for Sound Playback in Sequencer Blog",
+    "section": "Complex Numbers",
+    "text": "Complex Numbers\nA complex number \\(z\\) is written in the form:\n\\[\nz = x + jy\n\\]\nwhere \\(x\\) is the real part and \\(y\\) is the imaginary part. Furthermore, \\(j\\) is the imaginary unit, where \\(j = \\sqrt{-1}\\) and \\(j^2 = -1\\).\nIn Python, we can represent complex numbers like so:\n\nz = 2 + 3j\n\nPlotting the complex number \\(z\\) on the coordinate plane, we have:\n\n\nCode\nfig, ax = plt.subplots(figsize=(4, 4))\nax.set_xlim(-1, 5)\nax.set_ylim(-1, 5)\nplt.axhline(y=0, color='black', linewidth=1.5)  \nplt.axvline(x=0, color='black', linewidth=1.5) \n\nplt.grid(True)\nplt.scatter(z.real, z.imag)\nplt.text(z.real, z.imag, f'({z.real}, {z.imag}j)', fontsize=12, verticalalignment='bottom')\nplt.xlabel('Real axis')\nplt.ylabel('Imaginary axis')\nplt.show()\n\n\n\n\n\n\n\n\n\nThe conjugation of \\(z\\) is represented by the negation of the imaginary part, and is denoted by:\n\\[\nz^* = x - jy\n\\]\nIn Python, we can get the conjugate by using .conjugate() method:\n\nz_conj = z.conjugate()\nprint(z_conj)\n\n(2-3j)\n\n\nPlotting the conjugation, we have:\n\n\nCode\nfig, ax = plt.subplots(figsize=(4, 4))\nax.set_xlim(-1, 5)\nax.set_ylim(-5, 5)\nplt.axhline(y=0, color='black', linewidth=1.5)  \nplt.axvline(x=0, color='black', linewidth=1.5) \n\nplt.grid(True)\nplt.scatter(z.real, z.imag)\nplt.text(z.real, z.imag, f'  z: ({z.real}, {z.imag}j)', fontsize=12, verticalalignment='bottom')\n\nplt.scatter(z_conj.real, z_conj.imag, color='red', label='z_conj')\nplt.text(z_conj.real, z_conj.imag, f'  z*: ({z_conj.real}, {z_conj.imag}j)', fontsize=12, verticalalignment='top')\n\n\nplt.xlabel('Real axis')\nplt.ylabel('Imaginary axis')\nplt.show()\n\n\n\n\n\n\n\n\n\nSo geometrically, the conjugation can represent reflection over the real axis!\n\nEuler’s Formula\nEuler’s formula is represented as: \\[\ne^{j\\theta} = \\cos(\\theta) + j\\sin(\\theta)\n\\]\nAny complex number \\(z\\) can be represented in polar coordinates like so:\n\\[\n\\begin{align*}\nz &= r \\cdot \\left(\\cos(\\theta) + \\mathrm{j}\\cdot\\sin(\\theta) \\right)\\\\\n  &= r \\cdot e^{\\mathrm{j}\\theta}\n\\end{align*}\n\\]\nwhere \\(r\\) represents the magnitude of the complex number and \\(\\theta\\) represents the\n\n\nCode\nr1, theta1 = 2, np.pi / 4  \nr2, theta2 = 3, np.pi / 6\nz1 = r1 * np.exp(1j * theta1)\nz2 = r2 * np.exp(1j * theta2)\n\nz_product = z1 * z2\n\nr_product = np.abs(z_product)\ntheta_product = np.angle(z_product)\n\nprint(f\"z1 = {z1:.2f} (Retangular Form)\")\nprint(f\"z2 = {z2:.2f} (Retangular Form)\")\nprint(f\"z1 Angle (radians): {np.angle(z1):.2f}\")\nprint(f\"z1 * z2 = {z_product:.2f}\")\nprint(f\"Product magnitude: {r_product:.2f}\")\nprint(f\"Product angle (radians): {theta_product:.2f}\")\nprint(f\"Product angle (degrees): {np.degrees(theta_product):.2f}\")\nfig = plt.figure(figsize=(8, 6))\nax = fig.add_subplot(111, polar=True)\n\nax.plot([0, theta1], [0, r1], label='z1', marker='o')\nax.plot([0, theta2], [0, r2], label='z2', marker='o')\nax.plot([0, theta_product], [0, r_product], label='z1 * z2', marker='o', linestyle='--')\nax.set_rlabel_position(135)\n\n\nax.set_title(\"Polar Plot of z1, z2, and z1 * z2\", va='bottom')\nax.legend(loc='upper right')\nplt.show()\n\n\nz1 = 1.41+1.41j (Retangular Form)\nz2 = 2.60+1.50j (Retangular Form)\nz1 Angle (radians): 0.79\nz1 * z2 = 1.55+5.80j\nProduct magnitude: 6.00\nProduct angle (radians): 1.31\nProduct angle (degrees): 75.00"
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#compiling-the-rubber-band-library",
+    "href": "posts/blender_extern_lib/index.html#compiling-the-rubber-band-library",
+    "title": "Adding External Libraries in Blender",
+    "section": "Compiling the Rubber Band Library",
+    "text": "Compiling the Rubber Band Library\nAfter downloading the source code, I looked at COMPILING.md which had some references to Meson but importantly,\nRubberBandTest\n├─ CMakeLists.txt\n├─ beatles.wav\n├─ main.cpp\n└─ rubberband"
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#results",
+    "href": "posts/blender_extern_lib/index.html#results",
+    "title": "Adding External Libraries in Blender",
+    "section": "Results",
+    "text": "Results"
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#some-results",
+    "href": "posts/blender_extern_lib/index.html#some-results",
+    "title": "Adding External Libraries in Blender",
+    "section": "Some Results",
+    "text": "Some Results\nOriginal Audio:\n\n\nCode\nfrom IPython.display import Audio\nAudio(\"beatles_orig.wav\", rate=48000)\n\n\n\n                \n                    \n                    Your browser does not support the audio element.\n                \n              \n\n\n2x Speed:\n\n\n\n                \n                    \n                    Your browser does not support the audio element.\n                \n              \n\n\n0.5x Speed:\n\n\n\n                \n                    \n                    Your browser does not support the audio element.\n                \n              \n\n\nThe code for this example can be found here… [TODO]"
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#compiling-the-rubber-band-library-wip",
+    "href": "posts/blender_extern_lib/index.html#compiling-the-rubber-band-library-wip",
+    "title": "Adding External Libraries in Blender",
+    "section": "Compiling the Rubber Band Library (WIP)",
+    "text": "Compiling the Rubber Band Library (WIP)\nAfter downloading the source code, I looked at COMPILING.md which had some references to Meson but more importantly…\nFile Structure:\nRubberBandTest\n├─ CMakeLists.txt\n├─ beatles.wav\n├─ main.cpp\n└─ rubberband"
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#library-usage",
+    "href": "posts/blender_extern_lib/index.html#library-usage",
+    "title": "Adding External Libraries in Blender",
+    "section": "Library Usage",
+    "text": "Library Usage\nNotes to add…\n\nProcess on an array of floats…\nThe setTimeRatio() method, where setTimeRatio(0.5) makes the audio 2x quicker and preserves pitch\n\nThe Rubber Band Library also provides an option to shift the pitch too through the setPitchScale method."
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#compiling-the-rubber-band-library-todo",
+    "href": "posts/blender_extern_lib/index.html#compiling-the-rubber-band-library-todo",
+    "title": "Adding External Libraries in Blender",
+    "section": "Compiling the Rubber Band Library (TODO)",
+    "text": "Compiling the Rubber Band Library (TODO)\nAfter downloading the source code, I looked at COMPILING.md which had some references to Meson but more importantly…\nFile Structure:\nRubberBandTest\n├─ CMakeLists.txt\n├─ beatles.wav\n├─ main.cpp\n└─ rubberband"
+  },
+  {
+    "objectID": "posts/blender_extern_lib/index.html#library-usage-todo",
+    "href": "posts/blender_extern_lib/index.html#library-usage-todo",
+    "title": "Adding External Libraries in Blender",
+    "section": "Library Usage (TODO)",
+    "text": "Library Usage (TODO)\nNotes to add and explain…\n\nInitialize the RubberBandStretcher class with options\nMention the setTimeRatio() method, where setTimeRatio(0.5) makes the audio 2x quicker and setTimeRatio(2.0) makes the audio 0.5x quicker. Both preserve pitch.\nMention the study and process method. The process method does the actual transformation on the float vector audio data.\nGet the processed audio with the retrieve method…\nMention option to shift pitch too though setPitchScale method."
   }
 ]

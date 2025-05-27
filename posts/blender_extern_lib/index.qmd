@@ -1,0 +1,71 @@
+---
+title: "Adding External Libraries in Blender"
+author: "TheKaceFiles"
+date: "2025-05-25"
+description: "WIP: Integrating the `Rubber Band Library` in Blender"
+date-modified: "5/27/2025"
+categories: [blender, c++]
+---
+
+## Intro
+
+In my proposal, I mentioned that the [Rubber Band Library](https://breakfastquay.com/rubberband/), a 3rd-party library compatible with Blender's open source license, could be used to implement pitch correction into Blender's video sequence editor (VSE). This would mean that we wouldn't have to implement the algorithm manually! However, before proceeding with this approach, there several things that had to be considered:
+
+- Build Complexity - Evaluating how difficult/complex the build process is
+- Build Size - Is it binary size small enough to be integrated into Blender?
+
+
+As a preliminary task, I wanted to attempt to build the Rubber Band Library and looked at `extern/audaspace` to better understand Blender's build process. Surprisingly enough, I've never used CMAKE (though I have used `makefile` before) nor never downloaded a library for any of my C++ programs during university. So, I thought it would be a good to try to utilize the Rubber Band Library on a bare bones command-line program, where you can specify the input audio file and then the output audio file at 2x speed which will be pitch-corrected by the library. 
+
+
+## Compiling the Rubber Band Library (TODO)
+
+After downloading the [source code](https://breakfastquay.com/files/releases/rubberband-4.0.0.tar.bz2), I looked at `COMPILING.md` which had some references to [Meson](https://mesonbuild.com/) but more importantly...
+
+
+*File Structure:*
+
+```
+RubberBandTest
+├─ CMakeLists.txt
+├─ beatles.wav
+├─ main.cpp
+└─ rubberband
+```
+
+## Library Usage (TODO)
+
+**Notes to add and explain...** 
+
+- Initialize the `RubberBandStretcher` class with options
+- Mention the `setTimeRatio()` method, where `setTimeRatio(0.5)` makes the audio 2x quicker and `setTimeRatio(2.0)` makes the audio 0.5x quicker. Both preserve pitch.
+- Mention the `study` and `process` method. The `process` method does the actual transformation on the float vector audio data. 
+- Get the processed audio with the `retrieve` method...
+- Mention option to shift pitch too though `setPitchScale` method.
+
+
+## Some Results
+
+**Original Audio:** 
+```{python}
+from IPython.display import Audio
+Audio("beatles_orig.wav", rate=48000)
+```
+
+
+**2x Speed:**
+```{python}
+#| echo: false
+from IPython.display import Audio
+Audio("beatles2x.wav", rate=48000)
+```
+
+**0.5x Speed:**
+```{python}
+#| echo: false
+from IPython.display import Audio
+Audio("beatles0.5x.wav", rate=48000)
+```
+
+The code for this example can be found here... [TODO]
+

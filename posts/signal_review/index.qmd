@@ -4,7 +4,7 @@ author: "TheKaceFiles"
 date: "2025-05-24"
 description: "A collection of Digital Signal Processing notes"
 date-modified: "5/25/2025"
-categories: [dsp]
+categories: [dsp, python]
 jupyter: python3
 ---
 
@@ -24,6 +24,7 @@ Suppose we have the following signal which is sampled at 50 Hz and has a duratio
 ```{python}
 #| label: fig-signal-example
 #| fig-cap: "Signal example"
+#| fig-alt: Graph of cosine wave with a frequency of 2 and sampled at a sample rate of 50 Hz
 fs = 50
 duration = 2
 freq = 2
@@ -121,3 +122,129 @@ for n in range(-12, 67):
 
 Audio(data=audio_sequence, rate=fs)
 ```
+<!-- 
+
+## Complex Numbers
+
+A complex number $z$ is written in the form:
+
+$$
+z = x + jy
+$$
+
+
+where $x$ is the real part and $y$ is the imaginary part. Furthermore, $j$ is the imaginary unit, where $j = \sqrt{-1}$ and $j^2 = -1$.
+
+
+In Python, we can represent complex numbers like so:
+
+```{python}
+#| code-fold: false
+z = 2 + 3j
+```
+
+Plotting the complex number $z$ on the coordinate plane, we have:
+
+```{python}
+fig, ax = plt.subplots(figsize=(4, 4))
+ax.set_xlim(-1, 5)
+ax.set_ylim(-1, 5)
+plt.axhline(y=0, color='black', linewidth=1.5)  
+plt.axvline(x=0, color='black', linewidth=1.5) 
+
+plt.grid(True)
+plt.scatter(z.real, z.imag)
+plt.text(z.real, z.imag, f'({z.real}, {z.imag}j)', fontsize=12, verticalalignment='bottom')
+plt.xlabel('Real axis')
+plt.ylabel('Imaginary axis')
+plt.show()
+```
+
+The conjugation of $z$ is represented by the negation of the *imaginary part*, and is denoted by:
+
+$$
+z^* = x - jy
+$$
+
+In Python, we can get the conjugate by using `.conjugate()` method:
+
+```{python}
+#| code-fold: false
+z_conj = z.conjugate()
+print(z_conj)
+```
+
+Plotting the conjugation, we have:
+```{python}
+fig, ax = plt.subplots(figsize=(4, 4))
+ax.set_xlim(-1, 5)
+ax.set_ylim(-5, 5)
+plt.axhline(y=0, color='black', linewidth=1.5)  
+plt.axvline(x=0, color='black', linewidth=1.5) 
+
+plt.grid(True)
+plt.scatter(z.real, z.imag)
+plt.text(z.real, z.imag, f'  z: ({z.real}, {z.imag}j)', fontsize=12, verticalalignment='bottom')
+
+plt.scatter(z_conj.real, z_conj.imag, color='red', label='z_conj')
+plt.text(z_conj.real, z_conj.imag, f'  z*: ({z_conj.real}, {z_conj.imag}j)', fontsize=12, verticalalignment='top')
+
+
+plt.xlabel('Real axis')
+plt.ylabel('Imaginary axis')
+plt.show()
+```
+
+So geometrically, the conjugation can represent reflection over the real axis!
+
+
+### Euler's Formula
+
+Euler's formula is represented as:
+$$
+e^{j\theta} = \cos(\theta) + j\sin(\theta)
+$$
+
+Any complex number $z$ can be represented in polar coordinates like so:
+
+
+$$
+\begin{align*}
+z &= r \cdot \left(\cos(\theta) + \mathrm{j}\cdot\sin(\theta) \right)\\
+  &= r \cdot e^{\mathrm{j}\theta}
+\end{align*}
+$$
+ 
+where $r$ represents the **magnitude** of the complex number and $\theta$ represents the  
+
+```{python}
+r1, theta1 = 2, np.pi / 4  
+r2, theta2 = 3, np.pi / 6
+z1 = r1 * np.exp(1j * theta1)
+z2 = r2 * np.exp(1j * theta2)
+
+z_product = z1 * z2
+
+r_product = np.abs(z_product)
+theta_product = np.angle(z_product)
+
+print(f"z1 = {z1:.2f} (Retangular Form)")
+print(f"z2 = {z2:.2f} (Retangular Form)")
+print(f"z1 Angle (radians): {np.angle(z1):.2f}")
+print(f"z1 * z2 = {z_product:.2f}")
+print(f"Product magnitude: {r_product:.2f}")
+print(f"Product angle (radians): {theta_product:.2f}")
+print(f"Product angle (degrees): {np.degrees(theta_product):.2f}")
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot(111, polar=True)
+
+ax.plot([0, theta1], [0, r1], label='z1', marker='o')
+ax.plot([0, theta2], [0, r2], label='z2', marker='o')
+ax.plot([0, theta_product], [0, r_product], label='z1 * z2', marker='o', linestyle='--')
+ax.set_rlabel_position(135)
+
+
+ax.set_title("Polar Plot of z1, z2, and z1 * z2", va='bottom')
+ax.legend(loc='upper right')
+plt.show()
+``` -->
