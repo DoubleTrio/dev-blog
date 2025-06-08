@@ -267,7 +267,7 @@ Blender!blender::deg::DepsgraphNodeBuilder::build_scene_sequencer(Scene*)::$_0::
 ```
 </details> 
 
-The important thing to note above is that `BKE_sound_set_scene_sound_volume_at_frame` is called by the function `strip_update_sound_properties` in `sequencer.cc`. In a future blog, I'll likely discuss about the `animated` parameter in `AUD_SequenceEntry_setAnimationData` and have a demo program to test out, as currently, I'm not exactly sure what it does and haven't investigated thoroughl yet!
+The important thing to note above is that `BKE_sound_set_scene_sound_volume_at_frame` is called by the function `strip_update_sound_properties` in `sequencer.cc`. In a future blog, I'll likely discuss about the `animated` parameter in `AUD_SequenceEntry_setAnimationData` and have a demo program to test out, as currently, I'm not exactly sure what it does and haven't investigated thoroughly yet!
 
 ## Pitch 
 
@@ -477,8 +477,9 @@ void ED_operatortypes_sound()
 
 ## Random Thoughts
 
-- I learned a lot of things during the community bonding week and this first week from things like compiling/making a Quarto blog to learning a little bit about CMAKE files and reading them to using the debugger in VSCode a little bit more efficiently!
-- I hope these notes were somewhat useful or insightful to anyone looking to understand a bit about Blender's VSE! I know these notes will be useful for me down the line as I start to implement the pitch correction toggle, and I will have more questions down the line!
+- I learned a lot of things during the community bonding week and this first week from things like compiling/making a blog to learning a little bit about CMAKE files and how to read them, and to using the debugger in VSCode more efficiently!
+- I hope these notes were somewhat useful or insightful to anyone looking to understand a bit about Blender's VSE! I know these notes will be useful for me down the line as I start to implement the pitch correction toggle, and I will have more questions down the line! This post took way longer to write than I initially thought, but I really enjoyed taking the time to understand and explain a portion of Blender's VSE.
+
 
 
 
