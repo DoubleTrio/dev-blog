@@ -4,6 +4,7 @@ author: "TheKaceFiles"
 date: "2025-05-25"
 description: "WIP: Integrating the `Rubber Band Library` in Blender"
 date-modified: "5/27/2025"
+draft: true
 categories: [blender, c++]
 ---
 
@@ -76,3 +77,8 @@ Checking the static library `librubberband_static.a`, the library size is `2.6 M
 Here's [RubberBandSingle.cpp](https://github.com/breakfastquay/rubberband/blob/default/single/RubberBandSingle.cpp)
 
 
+
+<!-- 
+## Understanding CMAKE
+
+https://cmake.org/cmake/help/latest/guide/tutorial/index.html -->

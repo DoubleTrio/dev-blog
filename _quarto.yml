@@ -4,6 +4,11 @@ project:
 
 website:
   title: "GSOC 2025 - Pitch Correction for Sound Playback in Sequencer Blog"
+  navbar:
+    search: true
+    # left:
+    #   - text: "Home"
+    #     href: index.qmd
   # navbar:
     # right:
       # - about.qmd

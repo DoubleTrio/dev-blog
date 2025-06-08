@@ -1,0 +1,9 @@
+---
+title: "June 2th - Note Dump"
+author: "TheKaceFiles"
+date: "2025-06-02"
+description: "A collection of random notes for 2025-06"
+categories: [note-dump]
+jupyter: python3
+draft: true
+---
