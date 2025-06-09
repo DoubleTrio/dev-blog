@@ -8,7 +8,7 @@ categories: [blender, c++]
 ---
 
 
-This week, I have been taking the time to understand how Audaspace is integrated into Blender's VSE. The most important files are `blenkernel/intern/sound.cc` and its header file `blenkernel/BKE_sound.h`. I will taking a little look at specifically animating sound properties (eg. volume and pitch) which `@iss` or Richard Antalik describes in the following [thread](https://devtalk.blender.org/t/gsoc-2025-draft-pitch-correction-for-sound-playback-in-sequencer/39752). 
+This week, I have been taking the time to understand how Audaspace is integrated into Blender's VSE. The most important files are `blenkernel/intern/sound.cc` and its header file `blenkernel/BKE_sound.h`. I will taking a little look at specifically animating sound properties (eg. volume and pitch) which `@iss` or Richard Antalik describes in the following [thread](https://devtalk.blender.org/t/gsoc-2025-draft-pitch-correction-for-sound-playback-in-sequencer/39752). Furthermore, `@neYyon` or Jörg Müller gave tips on how to integrate the Rubber Band Library into Audaspace [here](https://devtalk.blender.org/t/gsoc-2025-pitch-correction-for-sound-playback/40371/2?u=thekacefiles).
 
 
 ## Playing Audio
@@ -375,14 +375,12 @@ Here's an example audio clip which contains both the RetimingRanges type!
 
 ## Next Steps
 
-- In the upcoming weeks, I will probably play around with the `AUD_SequenceEntry` class in an isolated environment to get a better sense of how it works and also mess around with the different `AnimateableProperty`s. - I currently have the Rubberband Library built as a static library in a separate, local fork, and make it public for code review this or next week. I will need to take the time to understand Audaspace's `Effect` and `EffectReader` class by looking at the many, many examples and see if I can do something with the `Rubberband Library` there
+- In the upcoming weeks, I will probably play around with the `AUD_SequenceEntry` class in an isolated environment to get a better sense of how it works and also mess around with the different `AnimateableProperty`s. - I currently have the Rubberband Library built as a static library in a separate, local fork, and make it public for code review this or next week. I will also take the time to understand Audaspace's `Effect` and `EffectReader` class by looking at the many, many examples and see if I can do something with the `Rubberband Library` there
 - I also need to finish up writing the post about compiling the `Rubberband Library`, how to use it, and benchmarking it to make sure it is suitable and usable for Audaspace/Blender
-- I can probably start adding some of the UI code for the Pitch Correction toggle
-- There's also a PR from a couple weeks that I should probably finish and has been dragging on for months now (whoops!)
 
 ## Questions
 
-These were things I wasn't sure about Blender's codebase or where I can access the variable from the UI. If any maintainers or anyone more familiar with the codebase could answer for me, that would be great! 
+These were things/questions I wasn't sure about Blender's codebase or where I can access the variable from the UI in the 1st week! These were answered by Aras, which I summarized his answers below.
 
 
 #### Question #1
@@ -393,68 +391,24 @@ BKE_sound_set_scene_sound_volume_at_frame(strip->scene_sound, frame, strip->volu
 
 where can the strip flag be toggled for having animated volume in Blender
 
+
+#### Answer #1
+
+The volume property is driven by an animation f-curve or animation driver expression. 
+
+
+![](volume_fcurve.png){fig-alt="Example of volume being driven by f-curve"}
+
 #### Question #2
 
 For `AUD_SequenceEntry_setAnimationData` function what exactly does the `animated` parameter do? I didn't have time to look into further this week.
 
+#### Answer #2
+
+When the `animated` parameter is set to `true`, then it applies whatever property to that given frame. Otherwise, it sets it for that entire `SequenceEntry`
 
 
 #### Question #3
-
-For defining the Pitch Correction toggle, should it something be added to `DNA_sequence_types.h`
-
-<details> 
-<summary>Code</summary>
-
-```{c++}
-enum {
-  /* `SELECT = (1 << 0)` */
-  SEQ_LEFTSEL = (1 << 1),
-  SEQ_RIGHTSEL = (1 << 2),
-  SEQ_OVERLAP = (1 << 3),
-  SEQ_FILTERY = (1 << 4),
-  SEQ_MUTE = (1 << 5),
-  SEQ_FLAG_TEXT_EDITING_ACTIVE = (1 << 6),
-  SEQ_REVERSE_FRAMES = (1 << 7),
-  SEQ_IPO_FRAME_LOCKED = (1 << 8),
-  SEQ_EFFECT_NOT_LOADED = (1 << 9),
-  SEQ_FLAG_DELETE = (1 << 10),
-  SEQ_FLIPX = (1 << 11),
-  SEQ_FLIPY = (1 << 12),
-  SEQ_MAKE_FLOAT = (1 << 13),
-  SEQ_LOCK = (1 << 14),
-  SEQ_USE_PROXY = (1 << 15),
-  SEQ_IGNORE_CHANNEL_LOCK = (1 << 16),
-  SEQ_AUTO_PLAYBACK_RATE = (1 << 17),
-  SEQ_SINGLE_FRAME_CONTENT = (1 << 18),
-  SEQ_SHOW_RETIMING = (1 << 19),
-  SEQ_SHOW_OFFSETS = (1 << 20),
-  SEQ_MULTIPLY_ALPHA = (1 << 21),
-
-  SEQ_USE_EFFECT_DEFAULT_FADE = (1 << 22),
-  SEQ_USE_LINEAR_MODIFIERS = (1 << 23),
-
-  /* flags for whether those properties are animated or not */
-  SEQ_AUDIO_VOLUME_ANIMATED = (1 << 24),
-  SEQ_AUDIO_PITCH_ANIMATED = (1 << 25),
-  SEQ_AUDIO_PAN_ANIMATED = (1 << 26),
-  SEQ_AUDIO_DRAW_WAVEFORM = (1 << 27),
-
-  /* don't include Annotations in OpenGL previews of Scene strips */
-  SEQ_SCENE_NO_ANNOTATION = (1 << 28),
-  SEQ_USE_VIEWS = (1 << 29),
-
-  /* Access scene strips directly (like a meta-strip). */
-  SEQ_SCENE_STRIPS = (1 << 30),
-
-  SEQ_INVALID_EFFECT = (1u << 31),
-};
-```
-
-</details> 
-
-
-#### Question #4
 
 For the operator types below, what editor has these operators in Blender?
 <details> 
@@ -473,33 +427,15 @@ void ED_operatortypes_sound()
 }
 ```
 
+#### Answer #3
+
+It's from "Render -> Render Audio..." menu item in Blender, but the operations are not too relevant to the project
+
 </details> 
 
 ## Random Thoughts
 
-- I learned a lot of things during the community bonding week and this first week from things like compiling/making a blog to learning a little bit about CMAKE files and how to read them, and to using the debugger in VSCode more efficiently!
+- I learned a lot of things during this first week from things like compiling/making a blog, to learning a little bit about CMAKE files and how to read them, and to using the debugger in VSCode more efficiently and for other projects
 - I hope these notes were somewhat useful or insightful to anyone looking to understand a bit about Blender's VSE! I know these notes will be useful for me down the line as I start to implement the pitch correction toggle, and I will have more questions down the line! This post took way longer to write than I initially thought, but I really enjoyed taking the time to understand and explain a portion of Blender's VSE.
-
-
-
-
-
-
-<!-- This is not animated... -->
-
-
-
-<!-- If we have a transition like below
-
-
-`range.speed_table[i]`
-
-`BKE_sound_set_scene_sound_pitch_at_frame(strip->scene_sound, frame + sound_offset, range.speed_table[i], true);`
-    
-you plenty of examples of how effects are implemented. You can then put
-this new effect on any other Sound (e.g. an audio file). Assuming you
-want to make the time stretching/pitch scaling animatable, the factor
-should be an AnimateableProperty that the IReader then reads from. The
-AnimatableProperty is currently used only in the Sequencer classes.
-
--->
+- It so far seems very likely that I will not have to manually implement the pitch correction algorithm myself!
+- In the future, I will probably update this post to have more information, as I've just mostly touched upon areas that were relevant to the project

@@ -178,7 +178,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>This week, I have been taking the time to understand how Audaspace is integrated into Blender’s VSE. The most important files are <code>blenkernel/intern/sound.cc</code> and its header file <code>blenkernel/BKE_sound.h</code>. I will taking a little look at specifically animating sound properties (eg. volume and pitch) which <code>@iss</code> or Richard Antalik describes in the following <a href="https://devtalk.blender.org/t/gsoc-2025-draft-pitch-correction-for-sound-playback-in-sequencer/39752">thread</a>.</p>
+<p>This week, I have been taking the time to understand how Audaspace is integrated into Blender’s VSE. The most important files are <code>blenkernel/intern/sound.cc</code> and its header file <code>blenkernel/BKE_sound.h</code>. I will taking a little look at specifically animating sound properties (eg. volume and pitch) which <code>@iss</code> or Richard Antalik describes in the following <a href="https://devtalk.blender.org/t/gsoc-2025-draft-pitch-correction-for-sound-playback-in-sequencer/39752">thread</a>. Furthermore, <code>@neYyon</code> or Jörg Müller gave tips on how to integrate the Rubber Band Library into Audaspace <a href="https://devtalk.blender.org/t/gsoc-2025-pitch-correction-for-sound-playback/40371/2?u=thekacefiles">here</a>.</p>
 <section id="playing-audio" class="level2">
 <h2 class="anchored" data-anchor-id="playing-audio">Playing Audio</h2>
 <p>When you press <code>Spacebar</code> to play an audio clip in the sequencer, the <code>BKE_sound_play_scene</code> function is called, which makes several calls to the Audaspace library below.</p>
@@ -301,7 +301,7 @@ Code
 }</code></pre>
 </details>
 <p>And the UI for the volume (or the sound properties) is defined in <code>space_sequencer.py</code></p>
-<div id="2ca5408f" class="cell" data-execution_count="1">
+<div id="c6e64de0" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>...</span>
@@ -398,7 +398,7 @@ Blender!blender::seq::for_each_callback(ListBase*, bool (*)(Strip*, void*), void
 Blender!blender::seq::eval_strips(Depsgraph*, Scene*, ListBase*) (blender/source/blender/sequencer/intern/sequencer.cc:1092)
 Blender!blender::deg::DepsgraphNodeBuilder::build_scene_sequencer(Scene*)::$_0::operator()(Depsgraph*) const (blender/source/blender/depsgraph/intern/builder/deg_builder_nodes.cc:2312)</code></pre>
 </details>
-<p>The important thing to note above is that <code>BKE_sound_set_scene_sound_volume_at_frame</code> is called by the function <code>strip_update_sound_properties</code> in <code>sequencer.cc</code>. In a future blog, I’ll likely discuss about the <code>animated</code> parameter in <code>AUD_SequenceEntry_setAnimationData</code> and have a demo program to test out, as currently, I’m not exactly sure what it does and haven’t investigated thoroughl yet!</p>
+<p>The important thing to note above is that <code>BKE_sound_set_scene_sound_volume_at_frame</code> is called by the function <code>strip_update_sound_properties</code> in <code>sequencer.cc</code>. In a future blog, I’ll likely discuss about the <code>animated</code> parameter in <code>AUD_SequenceEntry_setAnimationData</code> and have a demo program to test out, as currently, I’m not exactly sure what it does and haven’t investigated thoroughly yet!</p>
 </section>
 </section>
 <section id="pitch" class="level2">
@@ -483,78 +483,34 @@ void BKE_sound_set_scene_sound_pitch_constant_range(void *handle,
 <section id="next-steps" class="level2">
 <h2 class="anchored" data-anchor-id="next-steps">Next Steps</h2>
 <ul>
-<li>In the upcoming weeks, I will probably play around with the <code>AUD_SequenceEntry</code> class in an isolated environment to get a better sense of how it works and also mess around with the different <code>AnimateableProperty</code>s. - I currently have the Rubberband Library built as a static library in a separate, local fork, and make it public for code review this or next week. I will need to take the time to understand Audaspace’s <code>Effect</code> and <code>EffectReader</code> class by looking at the many, many examples and see if I can do something with the <code>Rubberband Library</code> there</li>
+<li>In the upcoming weeks, I will probably play around with the <code>AUD_SequenceEntry</code> class in an isolated environment to get a better sense of how it works and also mess around with the different <code>AnimateableProperty</code>s. - I currently have the Rubberband Library built as a static library in a separate, local fork, and make it public for code review this or next week. I will also take the time to understand Audaspace’s <code>Effect</code> and <code>EffectReader</code> class by looking at the many, many examples and see if I can do something with the <code>Rubberband Library</code> there</li>
 <li>I also need to finish up writing the post about compiling the <code>Rubberband Library</code>, how to use it, and benchmarking it to make sure it is suitable and usable for Audaspace/Blender</li>
-<li>I can probably start adding some of the UI code for the Pitch Correction toggle</li>
-<li>There’s also a PR from a couple weeks that I should probably finish and has been dragging on for months now (whoops!)</li>
 </ul>
 </section>
 <section id="questions" class="level2">
 <h2 class="anchored" data-anchor-id="questions">Questions</h2>
-<p>These were things I wasn’t sure about Blender’s codebase or where I can access the variable from the UI. If any maintainers or anyone more familiar with the codebase could answer for me, that would be great!</p>
+<p>These were things/questions I wasn’t sure about Blender’s codebase or where I can access the variable from the UI in the 1st week! These were answered by Aras, which I summarized his answers below.</p>
 <section id="question-1" class="level4">
 <h4 class="anchored" data-anchor-id="question-1">Question #1</h4>
 <p>For this line in <code>sequencer.cc</code></p>
 <pre><code>BKE_sound_set_scene_sound_volume_at_frame(strip-&gt;scene_sound, frame, strip-&gt;volume, (strip-&gt;flag &amp; SEQ_AUDIO_VOLUME_ANIMATED) != 0);</code></pre>
 <p>where can the strip flag be toggled for having animated volume in Blender</p>
 </section>
+<section id="answer-1" class="level4">
+<h4 class="anchored" data-anchor-id="answer-1">Answer #1</h4>
+<p>The volume property is driven by an animation f-curve or animation driver expression.</p>
+<p><img src="volume_fcurve.png" class="img-fluid" alt="Example of volume being driven by f-curve"></p>
+</section>
 <section id="question-2" class="level4">
 <h4 class="anchored" data-anchor-id="question-2">Question #2</h4>
 <p>For <code>AUD_SequenceEntry_setAnimationData</code> function what exactly does the <code>animated</code> parameter do? I didn’t have time to look into further this week.</p>
 </section>
+<section id="answer-2" class="level4">
+<h4 class="anchored" data-anchor-id="answer-2">Answer #2</h4>
+<p>When the <code>animated</code> parameter is set to <code>true</code>, then it applies whatever property to that given frame. Otherwise, it sets it for that entire <code>SequenceEntry</code></p>
+</section>
 <section id="question-3" class="level4">
 <h4 class="anchored" data-anchor-id="question-3">Question #3</h4>
-<p>For defining the Pitch Correction toggle, should it something be added to <code>DNA_sequence_types.h</code></p>
-<details>
-<summary>
-Code
-</summary>
-<pre class="{c++}"><code>enum {
-  /* `SELECT = (1 &lt;&lt; 0)` */
-  SEQ_LEFTSEL = (1 &lt;&lt; 1),
-  SEQ_RIGHTSEL = (1 &lt;&lt; 2),
-  SEQ_OVERLAP = (1 &lt;&lt; 3),
-  SEQ_FILTERY = (1 &lt;&lt; 4),
-  SEQ_MUTE = (1 &lt;&lt; 5),
-  SEQ_FLAG_TEXT_EDITING_ACTIVE = (1 &lt;&lt; 6),
-  SEQ_REVERSE_FRAMES = (1 &lt;&lt; 7),
-  SEQ_IPO_FRAME_LOCKED = (1 &lt;&lt; 8),
-  SEQ_EFFECT_NOT_LOADED = (1 &lt;&lt; 9),
-  SEQ_FLAG_DELETE = (1 &lt;&lt; 10),
-  SEQ_FLIPX = (1 &lt;&lt; 11),
-  SEQ_FLIPY = (1 &lt;&lt; 12),
-  SEQ_MAKE_FLOAT = (1 &lt;&lt; 13),
-  SEQ_LOCK = (1 &lt;&lt; 14),
-  SEQ_USE_PROXY = (1 &lt;&lt; 15),
-  SEQ_IGNORE_CHANNEL_LOCK = (1 &lt;&lt; 16),
-  SEQ_AUTO_PLAYBACK_RATE = (1 &lt;&lt; 17),
-  SEQ_SINGLE_FRAME_CONTENT = (1 &lt;&lt; 18),
-  SEQ_SHOW_RETIMING = (1 &lt;&lt; 19),
-  SEQ_SHOW_OFFSETS = (1 &lt;&lt; 20),
-  SEQ_MULTIPLY_ALPHA = (1 &lt;&lt; 21),
-
-  SEQ_USE_EFFECT_DEFAULT_FADE = (1 &lt;&lt; 22),
-  SEQ_USE_LINEAR_MODIFIERS = (1 &lt;&lt; 23),
-
-  /* flags for whether those properties are animated or not */
-  SEQ_AUDIO_VOLUME_ANIMATED = (1 &lt;&lt; 24),
-  SEQ_AUDIO_PITCH_ANIMATED = (1 &lt;&lt; 25),
-  SEQ_AUDIO_PAN_ANIMATED = (1 &lt;&lt; 26),
-  SEQ_AUDIO_DRAW_WAVEFORM = (1 &lt;&lt; 27),
-
-  /* don't include Annotations in OpenGL previews of Scene strips */
-  SEQ_SCENE_NO_ANNOTATION = (1 &lt;&lt; 28),
-  SEQ_USE_VIEWS = (1 &lt;&lt; 29),
-
-  /* Access scene strips directly (like a meta-strip). */
-  SEQ_SCENE_STRIPS = (1 &lt;&lt; 30),
-
-  SEQ_INVALID_EFFECT = (1u &lt;&lt; 31),
-};</code></pre>
-</details>
-</section>
-<section id="question-4" class="level4">
-<h4 class="anchored" data-anchor-id="question-4">Question #4</h4>
 For the operator types below, what editor has these operators in Blender?
 <details>
 <summary>
@@ -570,30 +526,21 @@ Code
   WM_operatortype_append(SOUND_OT_update_animation_flags);
   WM_operatortype_append(SOUND_OT_bake_animation);
 }</code></pre>
-</details>
+</details></section>
+<section id="answer-3" class="level4">
+<h4 class="anchored" data-anchor-id="answer-3">Answer #3</h4>
+<p>It’s from “Render -&gt; Render Audio…” menu item in Blender, but the operations are not too relevant to the project</p>
+
 </section>
 </section>
 <section id="random-thoughts" class="level2">
 <h2 class="anchored" data-anchor-id="random-thoughts">Random Thoughts</h2>
 <ul>
-<li>I learned a lot of things during the community bonding week and this first week from things like compiling/making a Quarto blog to learning a little bit about CMAKE files and reading them to using the debugger in VSCode a little bit more efficiently!</li>
-<li>I hope these notes were somewhat useful or insightful to anyone looking to understand a bit about Blender’s VSE! I know these notes will be useful for me down the line as I start to implement the pitch correction toggle, and I will have more questions down the line!</li>
+<li>I learned a lot of things during this first week from things like compiling/making a blog, to learning a little bit about CMAKE files and how to read them, and to using the debugger in VSCode more efficiently and for other projects</li>
+<li>I hope these notes were somewhat useful or insightful to anyone looking to understand a bit about Blender’s VSE! I know these notes will be useful for me down the line as I start to implement the pitch correction toggle, and I will have more questions down the line! This post took way longer to write than I initially thought, but I really enjoyed taking the time to understand and explain a portion of Blender’s VSE.</li>
+<li>It so far seems very likely that I will not have to manually implement the pitch correction algorithm myself!</li>
+<li>In the future, I will probably update this post to have more information, as I’ve just mostly touched upon areas that were relevant to the project</li>
 </ul>
-<!-- This is not animated... -->
-<!-- If we have a transition like below
-
-
-`range.speed_table[i]`
-
-`BKE_sound_set_scene_sound_pitch_at_frame(strip->scene_sound, frame + sound_offset, range.speed_table[i], true);`
-    
-you plenty of examples of how effects are implemented. You can then put
-this new effect on any other Sound (e.g. an audio file). Assuming you
-want to make the time stretching/pitch scaling animatable, the factor
-should be an AnimateableProperty that the IReader then reads from. The
-AnimatableProperty is currently used only in the Sequencer classes.
-
--->
 
 
 </section>
