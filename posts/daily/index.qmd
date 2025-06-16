@@ -1,9 +1,3 @@
----
-title: "June 2th - Note Dump"
-author: "TheKaceFiles"
-date: "2025-06-02"
-description: "A collection of random notes for 2025-06"
-categories: [note-dump]
-jupyter: python3
-draft: true
----
+version https://git-lfs.github.com/spec/v1
+oid sha256:e20574830919b509100ae3054dc00497798c4165670ba0815075b31dd2a56952
+size 188

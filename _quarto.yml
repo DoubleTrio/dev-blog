@@ -1,29 +1,3 @@
-project:
-  type: website
-  output-dir: docs
-
-website:
-  title: "GSOC 2025 - Pitch Correction for Sound Playback in Sequencer Blog"
-  navbar:
-    search: true
-    # left:
-    #   - text: "Home"
-    #     href: index.qmd
-  # navbar:
-    # right:
-      # - about.qmd
-      # - icon: github
-      #   href: https://github.com/
-      # - icon: twitter
-      #   href: https://twitter.com
-format:
-  html:
-    theme:
-      - cosmo
-      - brand
-    css: styles.css
-    code-fold: true
-jupyter: python3
-
-
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7dc47bc10b633c8361a24d56f1e7aa66a4a9314c2594b8587d139718585df7db
+size 498
